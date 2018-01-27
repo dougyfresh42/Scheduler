@@ -66,6 +66,22 @@ def friends():
     print(friends)
     return render_template('friends.html', friends = friends)
 
+@app.route('/groups', methods=['GET', 'POST'])
+@login_required
+def groups():
+    if request.method == 'POST':
+        True
+    # groups = schedulr.getGroups(current_user.id)
+    return render_template('groups.html', groups = ['Crew', 'Star Wars'])
+
+@app.route('/groups/<group_name>')
+@login_required
+def group(group_name):
+    if request.method == 'POST':
+        True
+    group = schedulr.checkAvailable(current_user.id)
+    return render_template('group.html', group_name = group_name, group = group)
+
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
 def schedule():

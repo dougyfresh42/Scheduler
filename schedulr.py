@@ -61,5 +61,5 @@ def processCalendar(calendar):
     for component in gcal.walk():
         if component.name == "VEVENT":
             print(component.get('summary'))
-            print(component.get('dtstart'))
+            print(component.get('dtstart').dt)
     calendar.close()

@@ -13,10 +13,10 @@
     {% if not current_user.is_authenticated %}
     <li class="pure-menu-item"><a href="{{url_for('login')}}" class="pure-menu-link">Login</a></li>
     <li class="pure-menu-item"><a href="{{url_for('register')}}" class="pure-menu-link">Register</a></li>
-    {% endif %}
+    {% else %}
     <li class="pure-menu-item"><a href="{{url_for('friends')}}" class="pure-menu-link">Friends</a></li>
+    <li class="pure-menu-item"><a href="{{url_for('groups')}}" class="pure-menu-link">Groups</a></li>
     <li class="pure-menu-item"><a href="{{url_for('schedule')}}" class="pure-menu-link">Schedule</a></li>
-    {% if current_user.is_authenticated %}
     <li class="pure-menu-item"><a href="{{url_for('logout')}}" class="pure-menu-link">Logout</a></li>
     {% endif %}
 </ul>

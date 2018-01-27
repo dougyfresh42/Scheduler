@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Groups{% endblock %}
+{% block content %}
+<h1>Groups</h1>
+<form method="post" class="pure-form">
+<fieldset>
+<legend>Add a group</legend>
+<input type="text" name="group_id" placeholder="Group name">
+<button type="submit" class="pure-button pure-button-primary">Add</button>
+</fieldset>
+</form>
+<h2>Groups You're In</h2>
+<div class="pure-menu">
+<ul class="pure-menu-list">
+{% for group in groups %}
+    <li class="pure-menu-item">
+    <a href="{{url_for('group', group_name=group)}}" class="pure-menu-link">
+    {{ group }}
+    </a>
+    </li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}
