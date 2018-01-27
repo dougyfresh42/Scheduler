@@ -1,0 +1,25 @@
+dbo.tUsers
+    ID
+    Username
+    Password
+dbo.tFriends
+    ID
+    Friend1
+        Foreign Key: tUsers
+    Friend2
+        Foreign Key: tUsers
+    SeesSchedule #Does user1 see user2's availability
+    Blocked #Did user2 block user1
+dbo.tRecurringSchedule
+    ID
+    User
+        Foreign Key: tUsers
+    StartTime
+    EndTime
+    Day
+dbo.tNonRecurringSchedule
+    ID
+    User
+        Foreign Key: tUsers
+    StartDate
+    EndDate
