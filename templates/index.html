@@ -5,4 +5,10 @@
 <a href="{{ url_for('login') }}">Login</a>
 <a href="{{ url_for('register') }}">Register</a>
 <a href="{{ url_for('schedule') }}">Schedule</a>
+<br>
+{% if current_user.is_authenticated %}
+Hello {{ current_user.id }}
+<br>
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endif %}
 {% endblock %}
