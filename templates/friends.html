@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Friends{% endblock %}
+{% block content %}
+<h1>Friends</h1>
+<form method="post" class="pure-form">
+<fieldset>
+<legend>Add a friend</legend>
+<input type="text" name="friend_id" placeholder="Friend Username">
+<button type="submit" class="pure-button pure-button-primary">Add</button>
+</fieldset>
+</form>
+<h2>Available Friends</h2>
+<ul>
+{% for friend in friends %}
+    {% if friend[1] %}
+        <li>{{ friend[0] }}</li>
+    {% endif %} 
+{% endfor %}
+</ul>
+<h2>Unavailable Friends</h2>
+<ul>
+{% for friend in friends %}
+    {% if not friend[1] %}
+        <li>{{ friend[0] }}</li>
+    {% endif %} 
+{% endfor %}
+</ul>
+{% endblock %}

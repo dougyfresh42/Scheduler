@@ -1,3 +1,4 @@
+from icalendar import Calendar
 import sqlite3
 
 def login(username, password):
@@ -30,11 +31,22 @@ def signup(username, password):
 def scheduleBlock():
     return False
 
-def addFriend():
-    return False
+def addFriend(username, friend):
+    conn = sqlite3.connect('schedulr.db')
 
-def checkAvailable():
-    return False
+    c = conn.cursor()
+    c.execute('INSERT INTO main.tFriends (User, Friend) values (?, ?)',
+        (username, friend))
+    conn.commit()
+    c.close()
+    return True
+
+def checkAvailable(username):
+    conn = sqlite3.connect('schedulr.db')
+
+    c = conn.cursor()
+    c.execute('SELECT Friend, 1 FROM main.tFriends WHERE User = ?', (username,))
+    return c.fetchall()
 
 def showUsers():
     conn = sqlite3.connect('schedulr.db')
@@ -43,3 +55,11 @@ def showUsers():
     c.execute('SELECT * FROM main.tusers')
     
     return False
+
+def processCalendar(calendar):
+    gcal = Calendar.from_ical(calendar.read())
+    for component in gcal.walk():
+        if component.name == "VEVENT":
+            print(component.get('summary'))
+            print(component.get('dtstart'))
+    calendar.close()

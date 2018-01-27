@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Scheduling{% endblock %}
+{% block content %}
+<h1>Scheduling</h1>
+<form enctype="multipart/form-data" method="POST" action="{{url_for("import_calendar")}}" class="pure-form">
+<fieldset>
+<legend>Import an iCal (.ics)</legend>
+<input type="file" name="calendar">
+<button type="submit" class="pure-button pure-button-primary">Import</button>
+</fieldset>
+</form>
+<br>
+<form method="POST" class="pure-form pure-form-stacked">
+<fieldset>
+<legend>Add an event</legend>
+Event Name:
+<input type="text" name="eventname">
+Start Date:
+<input type="date" name="startDate">
+Start Time:
+<input type="time" name="startTime">
+End Date:
+<input type="date" name="endDate">
+End Time:
+<input type="time" name="endTime">
+<button type="submit" class="pure-button pure-button-primary">Add Event</button>
+</fieldset>
+</form>
+{% endblock %}
