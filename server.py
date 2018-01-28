@@ -86,9 +86,9 @@ def group(group_name):
 @login_required
 def schedule():
     if request.method == 'POST':
-        True
-    else:
-        False
+        event_name = request.form['eventname']
+        user_name = current_user.id
+        schedulr.scheduleBlock(user_name, event_name, 0, 0)
     return render_template('schedule.html')
 
 @app.route('/import', methods=['POST'])
@@ -102,7 +102,7 @@ def import_calendar():
         return "Really screwed up"
     if calendar: # and allowed_file(file.filename)
         filename = current_user.id + "calendar.ics"
-        schedulr.processCalendar(calendar)
+        schedulr.processCalendar(calendar, current_user.id)
         return redirect(url_for('schedule'))
 
 @app.route('/')
