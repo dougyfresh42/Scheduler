@@ -85,7 +85,8 @@ def group(group_name):
     groupSchedule = schedulr.getGroupCalendar(group_name)
     table = schedulr.processSchedule(groupSchedule)
     members = schedulr.groupMembers(group_name)
-    return render_template('group.html', group_name = group_name, group = [], members = members, table = table)
+    availability = schedulr.checkAvailable(current_user.id, group_name)
+    return render_template('group.html', group_name = group_name, group = availability, members = members, table = table)
 
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
@@ -120,7 +121,9 @@ def import_calendar():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('friends'))
+    return redirect(url_for('login'))
 
 @app.route('/hello')
 def hello_world():

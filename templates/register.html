@@ -2,11 +2,13 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <h1>Register</h1>
-<form method="post">
-Username:
+<form method="post" class="pure-form">
+<fieldset>
+Username
 <input type="text" name="username">
-Password:
+Password
 <input type="password" name="password">
-<input type="submit">
+<button type="submit" class="pure-button pure-button-primary">Register</button>
+</fieldset>
 </form>
 {% endblock %}

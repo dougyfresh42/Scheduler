@@ -13,7 +13,8 @@
 <ul>
 {% for friend in friends %}
     {% if friend[2] or (not friend[2] and not friend[3]) %}
-        <li>{{ friend[1] }}</li>
+        <li>{{ friend[1] }}
+        {% if friend[2] %}is available until {{friend[2].strftime('%A %B %d at %-H:%M')}}{% endif %}</li>
     {% endif %} 
 {% endfor %}
 </ul>
@@ -21,7 +22,7 @@
 <ul>
 {% for friend in friends %}
     {% if not friend[2] and friend[3]%}
-        <li>{{ friend[1] }}</li>
+        <li>{{ friend[1] }} is unavailable until {{friend[3].strftime('%A %B %d at %-H:%M')}}</li>
     {% endif %} 
 {% endfor %}
 </ul>

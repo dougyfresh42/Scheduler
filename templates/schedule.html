@@ -13,6 +13,7 @@
         <th>Fri</th>
         <th>Sat</th>
         <th>Sun</th>
+    </tr>
 </thead>
 <tbody>
 {% for i in range(96) %}
@@ -22,9 +23,9 @@
     {% endif %}
     {% for j in range(7) %}
         {% if table[j][i][0] %}
-        <td style="height: 6px; width: 40px; background-color: red;" class="tooltip"><span class="tooltiptext">{{table[j][i][1]}}</span></td>
+        <td style="height: 6px; width: 40px; background-color: #0A0AFF;" class="tooltip"><span class="tooltiptext">{{table[j][i][1]}}</span></td>
         {% else %}
-        <td style="height: 6px; width: 40px; background-color: pink;"></td>
+        <td style="height: 6px; width: 40px; background-color: lightblue;"></td>
         {% endif %}
     {% endfor %}
     </tr>

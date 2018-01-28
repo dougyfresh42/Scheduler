@@ -2,11 +2,13 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 <h1>Login</h1>
-<form method="post">
-Username:
+<form method="post" class="pure-form">
+<fieldset>
+Username
 <input type="text" name="username">
-Password:
+Password
 <input type="password" name="password">
-<input type="submit">
+<button type="submit" class="pure-button pure-button-primary">Login</button>
+</fieldset>
 </form>
 {% endblock %}

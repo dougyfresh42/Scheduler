@@ -11,9 +11,24 @@
 </form>
 <h2>Table</h2>
 <table>
+<thead>
+    <tr>
+        <th></th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+        <th>Sun</th>
+    </tr>
+</thead>
 <tbody>
 {% for i in range(96) %}
     <tr>
+    {% if not i % 4 %}
+        <td rowspan="4">{{ i // 4 }}:00</td>
+    {% endif %}
     {% for j in range(7) %}
         {% if table[j][i][0] %}
         <td style="height: 6px; width: 40px; background-color: rgb(10,10,{{255 - table[j][i][0]}});" class="tooltip"><span class="tooltiptext">{{table[j][i][1]}}</span></td>
@@ -34,16 +49,17 @@
 <h2>Available Members</h2>
 <ul>
 {% for member in group %}
-    {% if member[1] %}
-        <li>{{ member[0] }}</li>
+    {% if member[2] or (not member[2] and not member[3]) %}
+        <li>{{ member[1] }}
+        {% if member[2] %}is available until {{member[2].strftime('%A %B %d at %-H:%M')}}{% endif %}</li>
     {% endif %} 
 {% endfor %}
 </ul>
 <h2>Unavailable Members</h2>
 <ul>
 {% for member in group %}
-    {% if not member[1] %}
-        <li>{{ member[0] }}</li>
+    {% if not member[2] and member[3] %}
+        <li>{{ member[1] }} is unavailable until {{member[3].strftime('%A %B %d at %-H:%M')}}</li>
     {% endif %} 
 {% endfor %}
 </ul>
