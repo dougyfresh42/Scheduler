@@ -3,7 +3,8 @@ January 27-28, 2018
 BrickHack 4
 
 URL: http://www.schedulr.me/
-Test Username: moyer
+*backup url* http://scheduler-env.pwev83ctby.us-east-1.elasticbeanstalk.com/login?next=%2Ffriends
+Test Usernames: [doug, moyer, alex, bob]
 	 Password: 1234
 
 Project:
