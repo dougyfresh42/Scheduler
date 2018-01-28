@@ -28,6 +28,16 @@ def getUID(username):
         print("user_id lookup failed")
         return False
 
+def getUsername(user_id):
+
+    try:
+        return session.query(User.username).filter(User.user_id ==
+                user_id).scalar()
+    except:
+        session.rollback()
+        print("username lookup failed")
+        return False
+
 def login(username, password):
 
     try:
@@ -106,6 +116,7 @@ def addFriend(username_, username):
 
     return True
 
+#returns [event_id,user_id,start_time,end_time]
 def checkAvailable(username):
 
     user_id = getUID(username)
@@ -142,9 +153,9 @@ def checkAvailable(username):
 
     return_array = []
     for row in session.query(busy).all():
-        return_array.append([row[0],row[1],None,row[2]])
+        return_array.append([row[0],getUsername(row[1]),None,row[2]])
     for row in session.query(free).all():
-        return_array.append([row[0],row[1],row[2],None])
+        return_array.append([row[0],getUsername(row[1]),row[2],None])
 
     try:
         return return_array
