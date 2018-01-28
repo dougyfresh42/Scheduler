@@ -5,12 +5,12 @@ from flask_login import LoginManager, login_user, login_required, logout_user, U
 import schedulr
 
 # App setup
-app = Flask(__name__)
+application = Flask(__name__)
 
 UPLOAD_FOLDER = 'tmp'
 ALLOWED_EXTENSIONS = set(['ics'])
 
-app.config.update(
+application.config.update(
     DEBUG = True,
     SECRET_KEY = 'secret tunnel',
     UPLOAD_FOLDER = UPLOAD_FOLDER
@@ -19,7 +19,7 @@ app.config.update(
 # Login Manager Setup
 # Perhaps we move the user class to a different file
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(application)
 
 login_manager.login_view = 'login'
 
@@ -33,7 +33,7 @@ def load_user(username):
     return User(username)
 
 # App endpoints
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -43,12 +43,12 @@ def login():
             return redirect(url_for('friends'))
     return render_template('login.html')
 
-@app.route('/logout', methods=['GET'])
+@application.route('/logout', methods=['GET'])
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/register', methods=['GET', 'POST'])
+@application.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -58,7 +58,7 @@ def register():
             return redirect(url_for('index'))
     return render_template('register.html')
 
-@app.route('/friends', methods=['GET', 'POST'])
+@application.route('/friends', methods=['GET', 'POST'])
 @login_required
 def friends():
     if request.method == 'POST':
@@ -68,7 +68,7 @@ def friends():
     friends = schedulr.checkAvailable(current_user.id, 'friends')
     return render_template('friends.html', friends = friends)
 
-@app.route('/groups', methods=['GET', 'POST'])
+@application.route('/groups', methods=['GET', 'POST'])
 @login_required
 def groups():
     if request.method == 'POST':
@@ -78,7 +78,7 @@ def groups():
     groups = schedulr.getGroups(current_user.id)
     return render_template('groups.html', groups = groups)
 
-@app.route('/groups/<group_name>', methods=['GET','POST'])
+@application.route('/groups/<group_name>', methods=['GET','POST'])
 @login_required
 def group(group_name):
     if request.method == 'POST':
@@ -90,7 +90,7 @@ def group(group_name):
     availability = schedulr.checkAvailable(current_user.id, group_name)
     return render_template('group.html', group_name = group_name, group = availability, members = members, table = table)
 
-@app.route('/schedule', methods=['GET', 'POST'])
+@application.route('/schedule', methods=['GET', 'POST'])
 @login_required
 def schedule():
     if request.method == 'POST':
@@ -108,7 +108,7 @@ def schedule():
     table = schedulr.processSchedule(schedule)
     return render_template('schedule.html', table = table)
 
-@app.route('/import', methods=['POST'])
+@application.route('/import', methods=['POST'])
 @login_required
 def import_calendar():
     if 'calendar' not in request.files:
@@ -121,12 +121,12 @@ def import_calendar():
         schedulr.processCalendar(calendar, current_user.id)
         return redirect(url_for('schedule'))
 
-@app.route('/')
+@application.route('/')
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('friends'))
     return redirect(url_for('login'))
 
-@app.route('/hello')
+@application.route('/hello')
 def hello_world():
     return 'Hello, World!'
