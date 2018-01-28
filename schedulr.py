@@ -4,12 +4,13 @@
 
 from sqlalchemy.orm import *
 from sqlalchemy import *
+from sqlalchemy.exc import SQLAlchemyError
 
 from icalendar import Calendar
 
 from db_model import *
 
-engine = create_engine('mysql://testuser:1234@localhost:3306/schedulr_db', 
+engine = create_engine('mysql://testuser:1234@129.21.104.170:3306/schedulr_db', 
         echo=True)
 
 Session = sessionmaker(bind=engine)
@@ -47,11 +48,17 @@ def signup(username, password):
     
     return login(username, password)
 
-def scheduleBlock():
-    return False
+def scheduleBlock(username, event_name, start_date, end_date):
+    try:
+        uid = session.query(User.user_id).filter(User.username == username)
+        session.add(Schedule(user_id=uid, event_name=event_name, start_time=start_date, end_time = end_date))
+        session.commit()
+    except SQLAlchemyError as exception:
+        session.rollback()
+        print("Couldn't Add Block")
+        return False
 
 def addFriend(user_id, username):
-
     friend_id = session.query(User.user_id).filter(func.lower(User.username) ==
             func.lower(username))
     fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
@@ -84,10 +91,12 @@ def showUsers():
     
     return False
 
-def processCalendar(calendar):
+def processCalendar(calendar, username):
     gcal = Calendar.from_ical(calendar.read())
     for component in gcal.walk():
         if component.name == "VEVENT":
-            print(component.get('summary'))
-            print(component.get('dtstart').dt)
+            event_name = component.get('summary')
+            datestart = component.decoded('dtstart')#component.get('dtstart').dt
+            dateend = component.decoded('dtend')#component.get('dtend').dt
+            scheduleBlock(username, event_name, datestart, dateend)
     calendar.close()
