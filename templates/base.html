@@ -30,8 +30,9 @@
 {% endblock %}
 </head>
 <body>
+<img src={{url_for('static', filename="schedulr_logo_512.png")}} style="width: 64px; float:left; padding-left: 5px; padding-top: 5px;">
 <div class="pure-menu pure-menu-horizontal" style="background-color: #F0F0F0;">
-<span class="pure-menu-heading">Schedul(e)r</span>
+<span style="text-transform: none; font-weight: bold;" class="pure-menu-heading">SCHEDULr</span>
 <ul class="pure-menu-list">
     {% if not current_user.is_authenticated %}
     <li class="pure-menu-item"><a href="{{url_for('login')}}" class="pure-menu-link">Login</a></li>
@@ -44,6 +45,7 @@
     {% endif %}
 </ul>
 </div>
+<br>
     <div id="content" style="padding-left:20px;">
         {% block content %}
         {% endblock %}
