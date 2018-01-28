@@ -131,7 +131,7 @@ def checkAvailable(username, group_name):
             group_id = session.query(Group.group_id).filter(
                     Group.group_name == group_name)#.scalar()
         group_ = session.query(InGroup).filter(InGroup.group_id ==
-                group_id)
+                group_id).subquery()
     except:
         session.rollback()
         print("failed to find group id")
@@ -152,12 +152,12 @@ def checkAvailable(username, group_name):
                     datetime.datetime.now(),
                     Schedule.end_time >= datetime.datetime.now(),
                     exists().where(Schedule.user_id == 
-                        group_.user_id)).subquery()
+                        group_.c.user_id)).subquery()
         late_events = session.query(Schedule.event_id, Schedule.user_id,
             Schedule.start_time).filter(Schedule.start_time >= 
                     datetime.datetime.now(),
                     exists().where(Schedule.user_id == 
-                        group_.user_id),
+                        group_.c.user_id),
                     ~exists().where(busy.c.user_id == Schedule.user_id)).\
                     subquery()
         next_event = session.query(late_events.c.event_id,
@@ -169,8 +169,8 @@ def checkAvailable(username, group_name):
         leftovers = session.query(User.user_id).filter(
                     ~exists().where(busy.c.user_id == User.user_id),
                     ~exists().where(free.c.user_id == User.user_id),
-                    exists().where(Schedule.user_id == 
-                        group_.user_id))
+                    exists().where(User.user_id == 
+                        group_.c.user_id))
                     
     except:
         session.rollback()
