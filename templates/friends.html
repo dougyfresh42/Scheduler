@@ -12,7 +12,7 @@
 <h2>Available Friends</h2>
 <ul>
 {% for friend in friends %}
-    {% if friend[2] %}
+    {% if friend[2] or (not friend[2] and not friend[3]) %}
         <li>{{ friend[1] }}</li>
     {% endif %} 
 {% endfor %}
@@ -20,7 +20,7 @@
 <h2>Unavailable Friends</h2>
 <ul>
 {% for friend in friends %}
-    {% if not friend[2] %}
+    {% if not friend[2] and friend[3]%}
         <li>{{ friend[1] }}</li>
     {% endif %} 
 {% endfor %}

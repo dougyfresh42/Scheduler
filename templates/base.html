@@ -30,7 +30,7 @@
 {% endblock %}
 </head>
 <body>
-<div class="pure-menu pure-menu-horizontal" style="background-color: cyan;">
+<div class="pure-menu pure-menu-horizontal" style="background-color: #F0F0F0;">
 <a href="#" class="pure-menu-heading pure-menu-link">Schedul(e)r</a>
 <ul class="pure-menu-list">
     {% if not current_user.is_authenticated %}
@@ -40,8 +40,7 @@
     <li class="pure-menu-item"><a href="{{url_for('friends')}}" class="pure-menu-link">Friends</a></li>
     <li class="pure-menu-item"><a href="{{url_for('groups')}}" class="pure-menu-link">Groups</a></li>
     <li class="pure-menu-item"><a href="{{url_for('schedule')}}" class="pure-menu-link">Schedule</a></li>
-    <li class="pure-menu-item"><a href="{{url_for('logout')}}" class="pure-menu-link">Logout</a></li>
-    <li class="pure-menu-item">{{current_user.id}}</li>
+    <li class="pure-menu-item"><a href="{{url_for('logout')}}" class="pure-menu-link">Logout of {{current_user.id}}</a></li>
     {% endif %}
 </ul>
 </div>

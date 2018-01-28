@@ -272,7 +272,8 @@ def getGroups(username):
     #    Group.group_name != "friends")
     groups = session.query(Group.group_name).filter(
         InGroup.group_id == Group.group_id,
-        InGroup.user_id == uid)
+        InGroup.user_id == uid,
+        Group.group_name != "friends")
     return groups.all()
 
 def groupMembers(groupname):
