@@ -117,9 +117,25 @@ def addFriend(username_, username):
     return True
 
 #returns [event_id,user_id,start_time,end_time]
-def checkAvailable(username):
+def checkAvailable(username, group_name):
 
     user_id = getUID(username)
+    
+    #get group id
+    try:
+        if group_name == 'friends':
+            group_id = session.query(Group.group_id).filter(
+                    Group.group_name == group_name,
+                    Group.owner_id == user_id).scalar()
+        else:
+            group_id = session.query(Group.group_id).filter(
+                    Group.group_name == group_name).scalar()
+        group_ = session.query(InGroup).all().filter(InGroup.group_id ==
+                group_id)
+    except:
+        session.rollback()
+        print("failed to find group id")
+        return False
 
     try:
         fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
@@ -134,10 +150,14 @@ def checkAvailable(username):
         busy = session.query(Schedule.event_id, Schedule.user_id,
             Schedule.end_time).filter(Schedule.start_time <= 
                     datetime.datetime.now(),
-                    Schedule.end_time >= datetime.datetime.now()).subquery()
+                    Schedule.end_time >= datetime.datetime.now(),
+                    exists().where(Schedule.user_id == 
+                        group_.user_id)).subquery()
         late_events = session.query(Schedule.event_id, Schedule.user_id,
             Schedule.start_time).filter(Schedule.start_time >= 
                     datetime.datetime.now(),
+                    exists().where(Schedule.user_id == 
+                        group_.user_id),
                     ~exists().where(busy.c.user_id == Schedule.user_id)).\
                     subquery()
         next_event = session.query(late_events.c.event_id,
@@ -146,6 +166,12 @@ def checkAvailable(username):
         free = session.query(late_events.c.event_id, late_events.c.user_id,
             late_events.c.start_time).join(next_event,
                     late_events.c.event_id == next_event.c.event_id).subquery()
+        leftovers = session.query(User.user_id).filter(
+                    ~exists().where(busy.c.user_id == User.user_id),
+                    ~exists().where(free.c.user_id == User.user_id),
+                    exists().where(Schedule.user_id == 
+                        group_.user_id))
+                    
     except:
         session.rollback()
         print("couldn't retrieve current events")
@@ -156,6 +182,8 @@ def checkAvailable(username):
         return_array.append([row[0],getUsername(row[1]),None,row[2]])
     for row in session.query(free).all():
         return_array.append([row[0],getUsername(row[1]),row[2],None])
+    for row in leftovers.all():
+        return_array.append([None,getUsername(row[0]),None,None])
 
     try:
         return return_array
