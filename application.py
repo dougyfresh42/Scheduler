@@ -21,6 +21,8 @@ application.config.update(
 login_manager = LoginManager()
 login_manager.init_app(application)
 
+login_manager.login_view = 'login'
+
 class User(UserMixin):
     def __init__(self, username):
         self.name = username + "ABC"
