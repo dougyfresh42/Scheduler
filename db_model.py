@@ -34,8 +34,10 @@ class Group(Base):
 class InGroup(Base):
     __tablename__ = 'in_group'
 
-    group_id = Column(Integer, primary_key=True, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    group_id = Column(Integer, primary_key=True, nullable=False,
+            unique=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'),
+            primary_key=True, nullable=False, unique=False)
 
     def __repr__(self):
         return "<User(id='%i', user id='%i')>" % (
