@@ -9,9 +9,6 @@ from icalendar import Calendar
 
 from db_model import *
 
-engine = create_engine('mysql://testuser:1234@localhost:3306/schedulr_db', 
-        echo=True)
-
 Session = sessionmaker(bind=engine)
 session = Session()
 session.rollback()
@@ -52,18 +49,25 @@ def scheduleBlock():
 
 def addFriend(user_id, username):
 
-    friend_id = session.query(User.user_id).filter(func.lower(User.username) ==
-            func.lower(username))
-    fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
-            Group.group_name == 'friends')
+    try:
+        friend_id = session.query(User.user_id).filter(
+                func.lower(User.username) == func.lower(username)).scalar()
+    except:
+        session.rollback()
+        return False
 
-    print("friend_id='%i'",friend_id)
+    fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
+            Group.group_name == 'friends').scalar()
+
+    print('friend_id={}'.format(friend_id))
+    print('user_id={}'.format(user_id))
+    print('group_id={}'.format(fg_id))
 
     try:
         session.add(InGroup(group_id=fg_id,
             user_id=friend_id))
         session.commit()
-    except SQLAlchemyError as exception:
+    except:
         session.rollback()
         return False
 
@@ -72,9 +76,10 @@ def addFriend(user_id, username):
 def checkAvailable(user_id):
 
     fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
-            Group.group_name == 'friends')
+            Group.group_name == 'friends').scalar()
 
-    return session.query(InGroup.user_id).filter(InGroup.group_id == fg_id)
+    return session.query(InGroup.user_id, InGroup.user_id).filter(
+            InGroup.group_id == fg_id)
 
 def showUsers():
     conn = sqlite3.connect('schedulr.db')

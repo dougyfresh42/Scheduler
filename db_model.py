@@ -5,7 +5,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import*
 
-engine = create_engine('mysql://testuser:1234@localhost:3306/schedulr_db', echo=True)
+engine = create_engine('mysql://testuser:1234@129.21.104.170:3306/schedulr_db', echo=True)
 
 Base = declarative_base()
 
