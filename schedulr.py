@@ -1,52 +1,80 @@
+#Alex Meddin Doug Moyer
+#January 27, 2017
+#scheduler.py
+
+from sqlalchemy.orm import *
+from sqlalchemy import *
+
 from icalendar import Calendar
-import sqlite3
+
+from db_model import *
+
+engine = create_engine('mysql://testuser:1234@localhost:3306/schedulr_db', 
+        echo=True)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+session.rollback()
 
 def login(username, password):
-    conn = sqlite3.connect('schedulr.db')
 
-    c = conn.cursor()
-    c.execute('SELECT * FROM main.tusers WHERE Username = ? AND Password = ?',
-        (username, password))
-
-    userrow = c.fetchone()
-    c.close()
-    if userrow is None:
-        print("Login Failed")
-        return False
-    
-    userID = userrow[0]
-    return True
+    return session.query(User).filter(func.lower(User.username) == 
+            func.lower(username), User.password == password).count()
 
 def signup(username, password):
-    conn = sqlite3.connect('schedulr.db')
+    
+    if (session.query(User).filter(func.lower(User.username) == 
+        func.lower(username)).count()):
+        print("User exists")
+        return False
 
-    c = conn.cursor()
-    c.execute('INSERT INTO main.tusers (Username, Password) values (?, ?)',
-        (username, password))
-    conn.commit()
-    c.close()
+    try:
+        session.add(User(username=username, password=password))
+        session.commit()
+    except SQLAlchemyError as exception:
+        session.rollback()
+        return False
 
+    uid = session.query(User.user_id).filter(User.username == 
+            username)
+
+    try:
+        session.add(Group(group_name='friends', owner_id=uid))
+        session.commit()
+    except SQLAlchemyError as exception:
+        session.rollback()
+        return False
+    
     return login(username, password)
 
 def scheduleBlock():
     return False
 
-def addFriend(username, friend):
-    conn = sqlite3.connect('schedulr.db')
+def addFriend(user_id, username):
 
-    c = conn.cursor()
-    c.execute('INSERT INTO main.tFriends (User, Friend) values (?, ?)',
-        (username, friend))
-    conn.commit()
-    c.close()
+    friend_id = session.query(User.user_id).filter(func.lower(User.username) ==
+            func.lower(username))
+    fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
+            Group.group_name == 'friends')
+
+    print("friend_id='%i'",friend_id)
+
+    try:
+        session.add(InGroup(group_id=fg_id,
+            user_id=friend_id))
+        session.commit()
+    except SQLAlchemyError as exception:
+        session.rollback()
+        return False
+
     return True
 
-def checkAvailable(username):
-    conn = sqlite3.connect('schedulr.db')
+def checkAvailable(user_id):
 
-    c = conn.cursor()
-    c.execute('SELECT Friend, 1 FROM main.tFriends WHERE User = ?', (username,))
-    return c.fetchall()
+    fg_id = session.query(Group.group_id).filter(Group.owner_id == user_id,
+            Group.group_name == 'friends')
+
+    return session.query(InGroup.user_id).filter(InGroup.group_id == fg_id)
 
 def showUsers():
     conn = sqlite3.connect('schedulr.db')

@@ -3,8 +3,7 @@
 #db_model.py
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import *
+from sqlalchemy import*
 
 engine = create_engine('mysql://testuser:1234@localhost:3306/schedulr_db', echo=True)
 
@@ -14,7 +13,7 @@ class User(Base):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True, nullable=False)
-    username = Column(String(40))
+    username = Column(String(40), unique=True)
     password = Column(String(40))
 
     def __repr__(self):
@@ -57,4 +56,3 @@ class Schedule(Base):
 
 Base.metadata.create_all(engine)
 
-print("Success")
