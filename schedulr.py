@@ -224,6 +224,7 @@ def processSchedule(schedule):
         for i in range(7):
             for j in range(96):
                 table[i][j][0] = (table[i][j][0] * 255) // max_num
+                table[i][j][1] = ", ".join(table[i][j][1])
     return table
 
 def addGroup(username, groupname):

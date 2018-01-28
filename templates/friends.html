@@ -12,16 +12,16 @@
 <h2>Available Friends</h2>
 <ul>
 {% for friend in friends %}
-    {% if friend[1] %}
-        <li>{{ friend[0] }}</li>
+    {% if friend[2] %}
+        <li>{{ friend[1] }}</li>
     {% endif %} 
 {% endfor %}
 </ul>
 <h2>Unavailable Friends</h2>
 <ul>
 {% for friend in friends %}
-    {% if not friend[1] %}
-        <li>{{ friend[0] }}</li>
+    {% if not friend[2] %}
+        <li>{{ friend[1] }}</li>
     {% endif %} 
 {% endfor %}
 </ul>

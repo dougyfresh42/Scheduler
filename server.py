@@ -38,7 +38,7 @@ def login():
         password = request.form['password']
         if schedulr.login(username, password):
             login_user(User(username))
-            return redirect(url_for('index'))
+            return redirect(url_for('friends'))
     return render_template('login.html')
 
 @app.route('/logout', methods=['GET'])
@@ -62,8 +62,8 @@ def friends():
     if request.method == 'POST':
         friend_id = request.form['friend_id']
         schedulr.addFriend(current_user.id, friend_id)
+        schedulr.addFriend(friend_id, current_user.id)
     friends = schedulr.checkAvailable(current_user.id)
-    print(friends)
     return render_template('friends.html', friends = friends)
 
 @app.route('/groups', methods=['GET', 'POST'])
