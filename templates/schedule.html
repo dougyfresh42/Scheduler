@@ -1,7 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Scheduling{% endblock %}
 {% block content %}
-<h1>Scheduling</h1>
+<h1>My Schedule</h1>
+<table>
+<thead>
+    <tr>
+        <th></th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+        <th>Sun</th>
+</thead>
+<tbody>
+{% for i in range(96) %}
+    <tr>
+    {% if not i % 4 %}
+        <td rowspan="4">{{ i // 4 }}:00</td>
+    {% endif %}
+    {% for j in range(7) %}
+        {% if table[j][i][0] %}
+        <td style="height: 6px; width: 40px; background-color: red;" class="tooltip"><span class="tooltiptext">{{table[j][i][1]}}</span></td>
+        {% else %}
+        <td style="height: 6px; width: 40px; background-color: pink;"></td>
+        {% endif %}
+    {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+<br>
 <form enctype="multipart/form-data" method="POST" action="{{url_for("import_calendar")}}" class="pure-form">
 <fieldset>
 <legend>Import an iCal (.ics)</legend>

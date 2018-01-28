@@ -5,7 +5,8 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import*
 
-engine = create_engine('mysql://testuser:1234@129.21.104.170:3306/schedulr_db', echo=True)
+#engine = create_engine('mysql://testuser:1234@129.21.104.170:3306/schedulr_db', echo=True)
+engine = create_engine('mysql://brickhack4:dougandalexhack@brickhack.cgbectexagdo.us-east-2.rds.amazonaws.com:3306/schedulr_db', echo=True)
 
 Base = declarative_base()
 
@@ -34,7 +35,8 @@ class Group(Base):
 class InGroup(Base):
     __tablename__ = 'in_group'
 
-    group_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    group_id = Column(Integer, ForeignKey('groups.group_id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
 
     def __repr__(self):

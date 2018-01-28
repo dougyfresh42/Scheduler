@@ -10,6 +10,8 @@ from icalendar import Calendar
 
 from db_model import *
 
+import datetime
+
 Session = sessionmaker(bind=engine)
 session = Session()
 session.rollback()
@@ -106,3 +108,84 @@ def processCalendar(calendar, username):
             dateend = component.decoded('dtend')#component.get('dtend').dt
             scheduleBlock(username, event_name, datestart, dateend)
     calendar.close()
+
+def getCalendar(username):
+    uid = session.query(User.user_id).filter(User.username == username)
+    schedule = session.query(
+        Schedule.event_name, Schedule.start_time, Schedule.end_time).filter(
+        Schedule.user_id == uid,
+        Schedule.start_time > datetime.datetime.now(),
+        Schedule.start_time < datetime.datetime.now()+datetime.timedelta(days=7))
+    return schedule.all()
+
+def getGroupCalendar(groupname):
+    gid = session.query(Group.group_id).filter(Group.group_name == groupname)
+    schedule = session.query(
+        User.username,
+        Schedule.start_time,
+        Schedule.end_time).filter(
+        Schedule.user_id == User.user_id,
+        InGroup.user_id == User.user_id,
+        InGroup.group_id == gid,
+        Schedule.start_time > datetime.datetime.now(),
+        Schedule.start_time < datetime.datetime.now()+datetime.timedelta(days=7))
+    return schedule.all()
+
+def processSchedule(schedule):
+    table = [[[0,set()] for x in range(96)] for x in range(7)]
+    max_num = 0
+    for event in schedule:
+        day = event[1] - datetime.datetime.now()
+        day = day.days
+        timestart = event[1].hour * 60 + event[1].minute
+        timeend = event[2].hour * 60 + event[2].minute
+        indexstart = timestart // 15
+        indexend = timeend // 15
+        for x in range(indexstart, indexend):
+            if event[0] not in table[day][x][1]:
+                table[day][x][0] = table[day][x][0] + 1
+                if table[day][x][0] > max_num:
+                    max_num = table[day][x][0]
+                table[day][x][1].add(event[0])
+    if max_num:
+        for i in range(7):
+            for j in range(96):
+                table[i][j][0] = (table[i][j][0] * 255) // max_num
+    return table
+
+def addGroup(username, groupname):
+    uid = session.query(User.user_id).filter(User.username == username)
+    try:
+        session.add(Group(group_name=groupname, owner_id=uid))
+        session.commit()
+        addUserToGroup(username, groupname)
+    except SQLAlchemyError as exception:
+        session.rollback()
+        return False
+
+def getGroups(username):
+    uid = session.query(User.user_id).filter(User.username == username)
+    #groups = session.query(Group.group_name).filter(
+    #    Group.owner_id == uid,
+    #    Group.group_name != "friends")
+    groups = session.query(Group.group_name).filter(
+        InGroup.group_id == Group.group_id,
+        InGroup.user_id == uid)
+    return groups.all()
+
+def groupMembers(groupname):
+    print("=========")
+    gid = session.query(Group.group_id).filter(Group.group_name == groupname)
+    members = session.query(User.username).filter(User.user_id == InGroup.user_id,
+        InGroup.group_id == gid)
+    return members.all()
+
+def addUserToGroup(username, groupname):
+    uid = session.query(User.user_id).filter(User.username == username)
+    gid = session.query(Group.group_id).filter(Group.group_name == groupname)
+    print("UID: {} GID: {}".format(uid, gid))
+    try:
+        session.add(InGroup(group_id = gid, user_id = uid))
+        session.commit()
+    except:
+        session.rollback()

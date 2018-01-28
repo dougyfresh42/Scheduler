@@ -5,7 +5,7 @@
 <form method="post" class="pure-form">
 <fieldset>
 <legend>Add user to group</legend>
-<input type="text" name="user_id" placeholder="Username">
+<input type="text" name="username" placeholder="Username">
 <button type="submit" class="pure-button pure-button-primary">Add</button>
 </fieldset>
 </form>
@@ -15,16 +15,22 @@
 {% for i in range(96) %}
     <tr>
     {% for j in range(7) %}
-        {% if (i+j) % 2 %}
-        <td style="height: 5px; width: 40px; background-color: red;"></td>
+        {% if table[j][i][0] %}
+        <td style="height: 6px; width: 40px; background-color: rgb(10,10,{{255 - table[j][i][0]}});" class="tooltip"><span class="tooltiptext">{{table[j][i][1]}}</span></td>
         {% else %}
-        <td style="height: 5px; width: 40px; background-color: pink;"></td>
+        <td style="height: 6px; width: 40px; background-color: lightblue;"></td>
         {% endif %}
     {% endfor %}
     </tr>
 {% endfor %}
 </tbody>
 </table>
+<h2>Members</h2>
+<ul>
+{% for member in members %}
+<li>{{member}}</li>
+{% endfor %}
+</ul>
 <h2>Available Members</h2>
 <ul>
 {% for member in group %}

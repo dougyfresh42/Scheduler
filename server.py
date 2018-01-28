@@ -70,17 +70,22 @@ def friends():
 @login_required
 def groups():
     if request.method == 'POST':
-        True
-    # groups = schedulr.getGroups(current_user.id)
-    return render_template('groups.html', groups = ['Crew', 'Star Wars'])
+        groupname = request.form['groupname']
+        schedulr.addGroup(current_user.id, groupname)
+        return redirect(url_for('group', group_name=groupname))
+    groups = schedulr.getGroups(current_user.id)
+    return render_template('groups.html', groups = groups)
 
-@app.route('/groups/<group_name>')
+@app.route('/groups/<group_name>', methods=['GET','POST'])
 @login_required
 def group(group_name):
     if request.method == 'POST':
-        True
-    group = schedulr.checkAvailable(current_user.id)
-    return render_template('group.html', group_name = group_name, group = group)
+        membername = request.form['username']
+        schedulr.addUserToGroup(membername, group_name)
+    groupSchedule = schedulr.getGroupCalendar(group_name)
+    table = schedulr.processSchedule(groupSchedule)
+    members = schedulr.groupMembers(group_name)
+    return render_template('group.html', group_name = group_name, group = [], members = members, table = table)
 
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
@@ -88,13 +93,21 @@ def schedule():
     if request.method == 'POST':
         event_name = request.form['eventname']
         user_name = current_user.id
-        schedulr.scheduleBlock(user_name, event_name, 0, 0)
-    return render_template('schedule.html')
+        start_date = request.form['startDate']
+        start_time = request.form['startTime']
+        end_date = request.form['endDate']
+        end_time = request.form['endTime']
+        schedulr.scheduleBlock(user_name,
+            event_name,
+            start_date+" "+start_time,
+            end_date+" "+end_time)
+    schedule = schedulr.getCalendar(current_user.id)
+    table = schedulr.processSchedule(schedule)
+    return render_template('schedule.html', table = table)
 
 @app.route('/import', methods=['POST'])
 @login_required
 def import_calendar():
-    print(request.files)
     if 'calendar' not in request.files:
         return "You screwed up"
     calendar = request.files['calendar']
