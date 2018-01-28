@@ -63,7 +63,7 @@ def friends():
         friend_id = request.form['friend_id']
         schedulr.addFriend(current_user.id, friend_id)
         schedulr.addFriend(friend_id, current_user.id)
-    friends = schedulr.checkAvailable(current_user.id)
+    friends = schedulr.checkAvailable(current_user.id, 'friends')
     return render_template('friends.html', friends = friends)
 
 @app.route('/groups', methods=['GET', 'POST'])

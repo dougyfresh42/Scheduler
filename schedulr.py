@@ -126,11 +126,11 @@ def checkAvailable(username, group_name):
         if group_name == 'friends':
             group_id = session.query(Group.group_id).filter(
                     Group.group_name == group_name,
-                    Group.owner_id == user_id).scalar()
+                    Group.owner_id == user_id)#.scalar()
         else:
             group_id = session.query(Group.group_id).filter(
-                    Group.group_name == group_name).scalar()
-        group_ = session.query(InGroup).all().filter(InGroup.group_id ==
+                    Group.group_name == group_name)#.scalar()
+        group_ = session.query(InGroup).filter(InGroup.group_id ==
                 group_id)
     except:
         session.rollback()
